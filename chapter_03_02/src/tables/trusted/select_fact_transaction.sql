@@ -1,1 +1,0 @@
-SELECT * FROM fact_transaction LIMIT 100;

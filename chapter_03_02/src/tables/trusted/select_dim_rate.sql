@@ -1,1 +1,0 @@
-SELECT * FROM dim_rate ORDER BY valid_from DESC;

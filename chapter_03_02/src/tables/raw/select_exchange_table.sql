@@ -1,1 +1,0 @@
-SELECT * FROM raw.exchange_data limit 10;

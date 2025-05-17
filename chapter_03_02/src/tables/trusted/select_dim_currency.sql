@@ -1,1 +1,0 @@
-SELECT * FROM dim_currency ORDER BY currency_code;
