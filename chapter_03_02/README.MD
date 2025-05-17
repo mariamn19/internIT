@@ -1,14 +1,35 @@
 # Architecture of Data Warehousing and Normalization
 
+## To do list
+
+- Design and document the three-layer architecture of the data warehouse.
+- Create schemas and tables for each layer (raw, staging, trusted) in PostgreSQL.
+- Load data into the raw layer from sources.
+- Write SQL scripts to transform and normalize data into the staging layer.
+- Apply denormalization techniques to prepare data for the trusted layer.
+- Visualize the data flow between layers using diagrams or SQL views.
+
+## Resources
+
+[Data Warehouse Architecture Layers, Principles & Practices to Know on StreamSets](https://streamsets.com/blog/data-warehouse-architecture/)\
+[Modern Data Warehouses: Functions, Architecture, & Examples on Estuary](https://www.estuary.dev/modern-data-warehouse/)\
+[How to evaluate and optimize data warehouse performance on TechTarget](https://www.techtarget.com/searchdatamanagement/tip/How-to-evaluate-and-optimize-data-warehouse-performance)\
+[What is Normalization in DBMS (SQL)? 1NF, 2NF, 3NF Example on guru99.com](https://www.guru99.com/database-normalization.html)\
+[The Problem of Redundancy in Database on GeeksforGeeks](https://www.geeksforgeeks.org/redundancy-in-databases/)\
+[Anomalies in Relational Model on GeeksforGeeks](https://www.geeksforgeeks.org/anomalies-in-dbms/)\
+[Data Cleaning Challenge: Scale and Normalize Data on Kaggle](https://www.kaggle.com/code/residentmario/data-cleaning-challenge-scale-and-normalize-data)
+
 ## Architecture of Data Warehousing
 
 In `intinit_db` database are created 3 layers:
 
-* **raw** --> source data
-* **staging** --> transformed data
-* **trusted** --> consumption data
+- **raw** --> source data
+- **staging** --> transformed data
+- **trusted** --> consumption data
 
 ### Raw layer
+
+Stores unprocessed, source-level data ingested directly from InternIT, ExchangeRate, and XE platforms. This layer ensures data traceability and acts as a historical archive.
 
 #### Create layer
 
@@ -48,6 +69,8 @@ To select data from exchange_data table use the code from src/tables/raw/select_
 To select data from xe_data table use the code from src/extract/src/tables/raw/select_xe_table.sql file.
 
 ### Staging layer
+
+Contains intermediate data that has been cleaned, validated, and transformed. This layer is used to prepare data for final consumption and supports data quality checks.
 
 #### fact_transaction
 
@@ -97,70 +120,27 @@ To select data from xe_data table use the code from src/extract/src/tables/raw/s
 
 ### Trusted layer
 
+Holds the final, business-ready data models used for analytics, dashboards, and reporting. This layer is optimized for performance and is the foundation for decision-making.
+
+### intern
+
+| Column Name       | Data Type      | Source Table            |
+|------------------|----------------|--------------------------|
+| `transaction_id`  | `VARCHAR(50)`  | `staging.fact_transaction` |
+| `first_name`      | `VARCHAR(255)` | `staging.dim_user`         |
+| `last_name`       | `VARCHAR(255)` | `staging.dim_user`         |
+| `city`            | `VARCHAR(50)`  | `staging.dim_user`         |
+| `currency`        | `VARCHAR(50)`  | `staging.dim_currency`     |
+| `amount_standard` | `BIGINT`       | `staging.dim_rate`         |
+| `type`            | `VARCHAR(15)`  | `staging.fact_transaction` |
+| `time`            | `TIMESTAMP`    | `staging.fact_transaction` |
+
 ## Normalization
 
-....To be reviewed...
+Normalization is a process used to reduce redundancy and improve data integrity in relational databases.
 
-For normalization operation use Star Schema presented in src/star_schema.drawio that can be viewed in VS Code or using [Drawio in browser](https://www.drawio.com/).
+Key Concepts:
 
-For normalization, we apply the **Star Schema** methodology, which structures data into **fact** and **dimension** tables to improve query performance and eliminate redundancy.
-
-You can view the schema diagram in the `src/star_schema.drawio` file using Visual Studio Code (with the Draw.io plugin) or directly in the [Draw.io online editor](https://app.diagrams.net/).
-
-### Create tables
-
-To create the normalized tables, use the SQL scripts provided in the following paths:
-
-**fact_transaction**  
-  Use: `src/tables/trusted/create_fact_transaction.sql`
-
-**dim_user**  
-  Use: `src/tables/trusted/create_dim_user.sql`
-
-**dim_currency**  
-  Use: `src/tables/trusted/create_dim_currency.sql`
-
-**dim_rate**  
-  Use: `src/tables/trusted/create_dim_rate.sql`
-
-### Insert data into Trusted Layer
-
-To populate the trusted layer tables with cleaned and transformed data from the **staging layer**, use the following scripts:
-
-**fact_transaction**  
-  Use: `src/tables/trusted/insert_fact_transaction.sql`
-
-**dim_user**  
-  Use: `src/tables/trusted/insert_dim_user.sql`
-
-**dim_currency**  
-  Use: `src/tables/trusted/insert_dim_currency.sql`
-
-**dim_rate**  
-  Use: `src/tables/trusted/insert_dim_rate.sql`
-
-### Select data for Trusted Layer
-
-You can validate the data and perform analysis by querying each table using:
-
-**fact_transaction**  
-  Use: `src/tables/trusted/select_fact_transaction.sql`
-
-**dim_user**  
-  Use: `src/tables/trusted/select_dim_user.sql`
-
-**dim_currency**  
-  Use: `src/tables/trusted/select_dim_currency.sql`
-
-**dim_rate**  
-  Use: `src/tables/trusted/select_dim_rate.sql`
-
-## Resources
-
-[Data Warehouse Architecture Layers, Principles & Practices to Know on StreamSets](https://streamsets.com/blog/data-warehouse-architecture/)\
-[Modern Data Warehouses: Functions, Architecture, & Examples on Estuary](https://www.estuary.dev/modern-data-warehouse/)\
-[How to evaluate and optimize data warehouse performance on TechTarget](https://www.techtarget.com/searchdatamanagement/tip/How-to-evaluate-and-optimize-data-warehouse-performance)\
-[What is Normalization in DBMS (SQL)? 1NF, 2NF, 3NF Example on guru99.com](https://www.guru99.com/database-normalization.html)\
-[The Problem of Redundancy in Database on GeeksforGeeks](https://www.geeksforgeeks.org/redundancy-in-databases/)\
-[Anomalies in Relational Model on GeeksforGeeks](https://www.geeksforgeeks.org/anomalies-in-dbms/)\
-[Data Cleaning Challenge: Scale and Normalize Data on Kaggle](https://www.kaggle.com/code/residentmario/data-cleaning-challenge-scale-and-normalize-data)
+- First Normal Form (1NF), Second Normal Form (2NF), and Third Normal Form (3NF).
+- Benefits and trade-offs of normalization vs denormalization.
+- Application of normalization in the staging layer and denormalization in the trusted layer for analytics.
