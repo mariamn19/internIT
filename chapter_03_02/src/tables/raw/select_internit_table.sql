@@ -1,0 +1,1 @@
+SELECT * FROM raw.internit_data limit 10;
