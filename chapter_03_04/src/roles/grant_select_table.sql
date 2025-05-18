@@ -1,0 +1,1 @@
+GRANT SELECTION ON trusted.top_10_currencies TO de_role;

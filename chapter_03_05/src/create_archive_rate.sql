@@ -1,0 +1,1 @@
+CREATE TABLE staging.dim_rate_archive AS TABLE staging.dim_rate;
